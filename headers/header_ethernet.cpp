@@ -6,9 +6,14 @@
  */
 
 #include "header_ethernet.h"
+
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
 
+
+const Header::Ethernet::Ethertype Header::Ethernet::ethertypeArp;
+const Header::Ethernet::Ethertype Header::Ethernet::ethertypeIpv4;
 
 Header::Ethernet::Ethernet()
 {
@@ -49,11 +54,14 @@ bool Header::Ethernet::GetRaw(unsigned char *ethernet, unsigned int size, unsign
     VlanCollection::const_iterator iter;
 
     if (ethernet == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL header detected" << std::endl;
         return false;
     }
 
     unsigned int vlansSize = __vlans.size() * Vlan::rawSize;
     if (size < (rawMinSize + vlansSize)) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Header buffer size " << size
+                  << " is too short" << std::endl;
         return false;
     }
 
@@ -96,10 +104,13 @@ bool Header::Ethernet::SetRaw(const unsigned char *ethernet, unsigned int size, 
     Clear();
 
     if (ethernet == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL header detected" << std::endl;
         return false;
     }
 
     if (size < rawMinSize) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Header buffer size " << size
+                  << " is too short" << std::endl;
         return false;
     }
 
@@ -124,6 +135,8 @@ bool Header::Ethernet::SetRaw(const unsigned char *ethernet, unsigned int size, 
         case Vlan::tpidCtag:
         case Vlan::tpidStag:
             if ((size - currentOffset) < Vlan::rawSize) {
+                std::cerr << __PRETTY_FUNCTION__ << ": Header buffer size " << size
+                          << " is too short to read VLAN" << std::endl;
                 return false;
             }
 

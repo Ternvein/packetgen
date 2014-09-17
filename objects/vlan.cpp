@@ -6,9 +6,19 @@
  */
 
 #include "vlan.h"
+
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
 
+
+const Vlan::Tpid Vlan::tpidCtag;
+const Vlan::Tpid Vlan::tpidStag;
+const Vlan::Cos Vlan::maxCos;
+const Vlan::Vid Vlan::minVid;
+const Vlan::Vid Vlan::maxVid;
+const Vlan::Cos Vlan::defaultCos;
+const Vlan::Vid Vlan::defaultVid;
 
 Vlan::Vlan()
 {
@@ -45,10 +55,13 @@ bool Vlan::Set(const Vlan &vlan)
 bool Vlan::GetRaw(unsigned char *vlan, unsigned int size) const
 {
     if (vlan == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL VLAN detected" << std::endl;
         return false;
     }
 
     if (size < rawSize) {
+        std::cerr << __PRETTY_FUNCTION__ << ": VLAN buffer size " << size
+                  << " is too short" << std::endl;
         return false;
     }
 
@@ -62,10 +75,13 @@ bool Vlan::SetRaw(const unsigned char *vlan, unsigned int size)
 	Clear();
 
     if (vlan == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL VLAN detected" << std::endl;
         return false;
     }
 
     if (size < rawSize) {
+        std::cerr << __PRETTY_FUNCTION__ << ": VLAN buffer size " << size
+                  << " is too short" << std::endl;
         return false;
     }
 
@@ -73,16 +89,22 @@ bool Vlan::SetRaw(const unsigned char *vlan, unsigned int size)
 
     Tpid tpid = (vlanData & tpidMask) >> offsetTpid;
     if (!IsTpidValid(tpid)) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Invalid TPID " << tpid
+                  << " detected" << std::endl;
         return false;
     }
 
     Cos cos = (vlanData & cosMask) >> offsetCos;
     if (!IsCosValid(cos)) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Invalid CoS " << cos
+                  << " detected" << std::endl;
         return false;
     }
 
     Vid vid = vlanData & vidMask;
     if (!IsVidValid(vid)) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Invalid VID " << vid
+                  << " detected" << std::endl;
         return false;
     }
 
@@ -101,7 +123,9 @@ Vlan::Tpid Vlan::GetTpid() const
 bool Vlan::SetTpid(const Tpid &tpid)
 {
     if (!IsTpidValid(tpid)) {
-        return false;
+       std::cerr << __PRETTY_FUNCTION__ << ": Invalid TPID " << tpid
+                 << " detected" << std::endl;
+       return false;
     }
 
     __raw &= ~tpidMask;
@@ -164,6 +188,8 @@ bool Vlan::SetTci(const Tci &tci)
 {
     Cos cos = (tci & cosMask) >> offsetCos;
     if (!IsCosValid(cos)) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Invalid CoS " << cos
+                  << " detected" << std::endl;
         return false;
     }
 
@@ -183,6 +209,8 @@ Vlan::Cos Vlan::GetCos() const
 bool Vlan::SetCos(const Cos &cos)
 {
     if (!IsCosValid(cos)) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Invalid CoS " << cos
+                  << " detected" << std::endl;
         return false;
     }
 
@@ -230,6 +258,8 @@ Vlan::Vid Vlan::GetVid() const
 bool Vlan::SetVid(const Vid &vid)
 {
     if (!IsVidValid(vid)) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Invalid VID " << vid
+                  << " detected" << std::endl;
         return false;
     }
 

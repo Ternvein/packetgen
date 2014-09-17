@@ -6,8 +6,10 @@
  */
 
 #include "pdu_arp.h"
+
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
 
 
 int main()
@@ -19,10 +21,14 @@ int main()
 
     memset(pdu, 0, sizeof(pdu));
 
-    arp.GetRaw(pdu, sizeof(pdu), &offset);
+    bool rc = arp.GetRaw(pdu, sizeof(pdu), &offset);
+    if (!rc) {
+        std::cerr << "Main: Can't get raw ARP" << std::endl;
+    }
 
+    std::cout << "PDU size: " << offset << std::endl;
     for (unsigned int i = 0; i < offset; i++) {
-        printf("%x ", pdu[i]);
+        printf("%02x ", pdu[i]);
     }
     printf("\r\n");
 

@@ -6,8 +6,10 @@
  */
 
 #include "pdu_arp.h"
+
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
 
 
 const char Pdu::Arp::defaultDstMac[] = "FF:FF:FF:FF:FF:FF";
@@ -42,12 +44,12 @@ void Pdu::Arp::Clear()
 
     __opcode = defaultOpcode;
 
-    MacAddress srcMac(defaultSrcMac, sizeof(defaultSrcMac));
     __senderIp.Parse(defaultSrcIp, sizeof(defaultSrcIp));
 
-    MacAddress dstMac(defaultDstMac, sizeof(defaultDstMac));
     __targetIp.Parse(defaultDstIp, sizeof(defaultDstIp));
 
+    MacAddress srcMac(defaultSrcMac, sizeof(defaultSrcMac));
+    MacAddress dstMac(defaultDstMac, sizeof(defaultDstMac));
     __ethernet.SetSrcMac(srcMac);
     __ethernet.SetDstMac(dstMac);
     __ethernet.SetEthertype(Header::Ethernet::ethertypeArp);
@@ -72,10 +74,13 @@ bool Pdu::Arp::Set(const Arp &arp)
 bool Pdu::Arp::GetRaw(unsigned char *arp, unsigned int size, unsigned int *offset) const
 {
     if (arp == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL packet detected" << std::endl;
         return false;
     }
 
     if (size < (dataMinSize + Header::Ethernet::rawMinSize)) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Packet buffer size " << size
+                  << " is too short" << std::endl;
         return false;
     }
 
@@ -125,9 +130,13 @@ bool Pdu::Arp::GetRaw(unsigned char *arp, unsigned int size, unsigned int *offse
     if (!rc) {
         return false;
     }
-    currentOffset += IpAddress::rawSize;
 
     memcpy(arp, arpTemp, size);
+
+    if (offset != NULL) {
+        currentOffset += IpAddress::rawSize;
+        *offset = currentOffset;
+    }
 
     return true;
 }
@@ -137,10 +146,12 @@ bool Pdu::Arp::SetRaw(const unsigned char *arp, unsigned int size, unsigned int 
     Clear();
 
     if (arp == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL packet detected" << std::endl;
         return false;
     }
 
     if (size < (dataMinSize + Header::Ethernet::rawMinSize)) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Packet buffer size " << size << " is too short" << std::endl;
         return false;
     }
 

@@ -6,8 +6,10 @@
  */
 
 #include "macaddress.h"
+
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
 
 
 MacAddress::MacAddress()
@@ -45,10 +47,13 @@ void MacAddress::Clear()
 bool MacAddress::GetRaw(unsigned char *mac, unsigned int size) const
 {
     if (mac == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL MAC detected" << std::endl;
         return false;
     }
 
     if (size < rawSize) {
+        std::cerr << __PRETTY_FUNCTION__ << ": MAC buffer size " << size
+                  << " is too short" << std::endl;
         return false;
     }
 
@@ -62,10 +67,12 @@ bool MacAddress::SetRaw(const unsigned char *mac, unsigned int size)
 	Clear();
 
     if (mac == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL MAC detected" << std::endl;
         return false;
     }
 
     if (size < rawSize) {
+        std::cerr << __PRETTY_FUNCTION__ << ": MAC buffer size " << size << " is too short" << std::endl;
         return false;
     }
 
@@ -90,38 +97,29 @@ bool MacAddress::Set(const MacAddress &mac)
 
 bool MacAddress::Parse(const char *mac, unsigned int size)
 {
-    unsigned char raw[rawSize];
-
     Clear();
 
     if (mac == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL MAC detected" << std::endl;
         return false;
     }
 
     if (size < stringSize) {
+        std::cerr << __PRETTY_FUNCTION__ << ": MAC buffer size " << size
+                  << " is too short" << std::endl;
         return false;
     }
 
-    unsigned int rc;
+    unsigned char raw[rawSize];
     unsigned int offset = 0;
     unsigned int octet = 0;
-    for (unsigned int i = 0; i < rawSize; i++) {
-        rc = sscanf(&mac[offset], "%x", &raw[i]);
-        if (rc != 1) {
-            return false;
-        }
-
-        offset += 2;
-        if (mac[offset] != ':') {
-            return false;
-        }
-
-        offset++;
-    }
+    int rc;
 
     while (mac[offset] != '\0') {
         rc = sscanf(&mac[offset], "%x", &raw[octet]);
         if (rc != 1) {
+            std::cerr << __PRETTY_FUNCTION__ << ": Error reading byte "
+                      << offset << " from buffer" << std::endl;
             return false;
         }
 
@@ -132,6 +130,8 @@ bool MacAddress::Parse(const char *mac, unsigned int size)
 
         offset += 2;
         if (mac[offset] != ':') {
+            std::cerr << __PRETTY_FUNCTION__ << ": Error reading byte "
+                      << offset << " from buffer" << std::endl;
             return false;
         }
 
@@ -147,10 +147,13 @@ bool MacAddress::Parse(const char *mac, unsigned int size)
 bool MacAddress::ToString(char *mac, unsigned int size) const
 {
     if (mac == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL MAC detected" << std::endl;
         return false;
     }
 
     if (size < stringSize) {
+        std::cerr << __PRETTY_FUNCTION__ << ": MAC buffer size " << size
+                  << " is too short" << std::endl;
         return false;
     }
 

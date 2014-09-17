@@ -6,9 +6,11 @@
  */
 
 #include "ipaddress.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <iostream>
 
 
 IpAddress::IpAddress()
@@ -46,10 +48,13 @@ void IpAddress::Clear()
 bool IpAddress::GetRaw(unsigned char *ip, unsigned int size) const
 {
     if (ip == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL IP detected" << std::endl;
         return false;
     }
 
     if (size < rawSize) {
+        std::cerr << __PRETTY_FUNCTION__ << ": IP buffer size " << size
+                  << " is too short" << std::endl;
         return false;
     }
 
@@ -63,10 +68,13 @@ bool IpAddress::SetRaw(const unsigned char *ip, unsigned int size)
     Clear();
 
     if (ip == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL IP detected" << std::endl;
         return false;
     }
 
     if (size < rawSize) {
+        std::cerr << __PRETTY_FUNCTION__ << ": IP buffer size " << size
+                  << " is too short" << std::endl;
         return false;
     }
 
@@ -91,10 +99,13 @@ bool IpAddress::Parse(const char *ip, unsigned int size)
     Clear();
 
     if (ip == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL IP detected" << std::endl;
         return false;
     }
 
     if (size < stringSizeMin || size > stringSizeMax) {
+        std::cerr << __PRETTY_FUNCTION__ << ": IP buffer size " << size
+                  << " is too short" << std::endl;
         return false;
     }
 
@@ -109,22 +120,27 @@ bool IpAddress::Parse(const char *ip, unsigned int size)
         return true;
     }
 
+    std::cerr << __PRETTY_FUNCTION__ << ": Error converting string into IP" << std::endl;
+
     return false;
 }
 
 bool IpAddress::ToString(char *ip, unsigned int size) const
 {
     if (ip == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL IP detected" << std::endl;
         return false;
     }
 
     if (size < stringSizeMin || size > stringSizeMax) {
+        std::cerr << __PRETTY_FUNCTION__ << ": IP buffer size " << size
+                  << " is too short" << std::endl;
         return false;
     }
 
     inet_ntop(AF_INET, __raw, ip, size);
 
-    return false;
+    return true;
 }
 
 void IpAddress::CheckMulticast()

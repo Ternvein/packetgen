@@ -291,3 +291,19 @@ bool Vlan::operator!=(const Vlan &right) const
 {
     return !operator==(right);
 }
+
+Vlan Vlan::operator++()
+{
+    __raw = (__raw + 1) & vidMask;
+
+    return *this;
+}
+
+Vlan Vlan::operator++(int)
+{
+    Vlan vlan(*this);
+
+    ++*this;
+
+    return vlan;
+}

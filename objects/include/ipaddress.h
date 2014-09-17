@@ -58,6 +58,8 @@ public:
 
     bool operator==(const IpAddress &right) const;
     bool operator!=(const IpAddress &right) const;
+    IpAddress operator++();
+    IpAddress operator++(int);
 };
 
 

@@ -259,6 +259,21 @@ bool Pdu::Arp::SetSrcMac(const MacAddress &mac)
     return __ethernet.SetSrcMac(mac);
 }
 
+Header::Ethernet::VlanCollection Pdu::Arp::GetVlans() const
+{
+    return __ethernet.GetVlans();
+}
+
+bool Pdu::Arp::AddVlan(const Vlan &vlan)
+{
+    return __ethernet.AddVlan(vlan);
+}
+
+bool Pdu::Arp::RemoveVlan(const Vlan &vlan)
+{
+    return __ethernet.RemoveVlan(vlan);
+}
+
 IpAddress Pdu::Arp::GetDstIp() const
 {
     return __targetIp;

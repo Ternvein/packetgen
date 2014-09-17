@@ -199,3 +199,26 @@ bool IpAddress::operator!=(const IpAddress &right) const
 {
     return !operator==(right);
 }
+
+IpAddress IpAddress::operator++()
+{
+    unsigned int i = sizeof(__raw) - 1;
+
+    for (; i >= 0; i--) {
+        __raw[i]++;
+        if (__raw[i] != 0) {
+            break;
+        }
+    }
+
+    return *this;
+}
+
+IpAddress IpAddress::operator++(int)
+{
+    IpAddress ip(*this);
+
+    ++*this;
+
+    return ip;
+}

@@ -138,6 +138,8 @@ bool MacAddress::Parse(const char *mac, unsigned int size)
         offset++;
     }
 
+    memcpy(__raw, raw, sizeof(__raw));
+
     CheckMulticast();
     CheckBroadcast();
 

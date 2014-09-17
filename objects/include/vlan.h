@@ -83,6 +83,8 @@ public:
 
     bool operator==(const Vlan &right) const;
     bool operator!=(const Vlan &right) const;
+    Vlan operator++();
+    Vlan operator++(int);
 };
 
 

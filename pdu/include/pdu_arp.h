@@ -73,6 +73,10 @@ public:
     MacAddress GetSrcMac() const;
     bool SetSrcMac(const MacAddress &mac);
 
+    Header::Ethernet::VlanCollection GetVlans() const;
+    bool AddVlan(const Vlan &vlan);
+    bool RemoveVlan(const Vlan &vlan);
+
     IpAddress GetDstIp() const;
     bool SetDstIp(const IpAddress &ip);
 

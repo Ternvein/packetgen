@@ -225,3 +225,26 @@ bool MacAddress::operator!=(const MacAddress &right) const
 {
     return !operator==(right);
 }
+
+MacAddress MacAddress::operator++()
+{
+    unsigned int i = sizeof(__raw) - 1;
+
+    for (; i >= 0; i--) {
+        __raw[i]++;
+        if (__raw[i] != 0) {
+            break;
+        }
+    }
+
+    return *this;
+}
+
+MacAddress MacAddress::operator++(int)
+{
+    MacAddress mac(*this);
+
+    ++*this;
+
+    return mac;
+}

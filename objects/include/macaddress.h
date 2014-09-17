@@ -46,6 +46,8 @@ public:
 
     bool operator==(const MacAddress &right) const;
     bool operator!=(const MacAddress &right) const;
+    MacAddress operator++();
+    MacAddress operator++(int);
 };
 
 

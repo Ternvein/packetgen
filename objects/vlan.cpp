@@ -6,9 +6,18 @@
  */
 
 #include "vlan.h"
+
 #include <stdio.h>
 #include <string.h>
 
+
+const Vlan::Tpid Vlan::tpidCtag;
+const Vlan::Tpid Vlan::tpidStag;
+const Vlan::Cos Vlan::maxCos;
+const Vlan::Vid Vlan::minVid;
+const Vlan::Vid Vlan::maxVid;
+const Vlan::Cos Vlan::defaultCos;
+const Vlan::Vid Vlan::defaultVid;
 
 Vlan::Vlan()
 {

@@ -131,7 +131,7 @@ void IpAddress::CheckMulticast()
 {
     unsigned int ip = *reinterpret_cast<unsigned int *>(__raw);
 
-    if (ip & multicastIpMask == multicastIp) {
+    if ((ip & multicastIpMask) == multicastIp) {
         __isMulticast = true;
         return;
     }

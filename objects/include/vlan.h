@@ -20,7 +20,7 @@ public:
 
     static const unsigned int rawSize = 4;
 
-    static const unsigned short tpidCtag = 0x8100;
+    static const Tpid tpidCtag = 0x8100;
     static const Tpid tpidStag = 0x88A8;
 
 private:

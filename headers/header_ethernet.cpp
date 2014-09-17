@@ -10,6 +10,9 @@
 #include <string.h>
 
 
+const Header::Ethernet::Ethertype Header::Ethernet::ethertypeArp;
+const Header::Ethernet::Ethertype Header::Ethernet::ethertypeIpv4;
+
 Header::Ethernet::Ethernet()
 {
     Clear();
@@ -121,7 +124,7 @@ bool Header::Ethernet::SetRaw(const unsigned char *ethernet, unsigned int size, 
     while (currentOffset < size) {
         ethertype = *reinterpret_cast<const Ethertype *>(&ethernet[currentOffset]);
         switch (ethertype) {
-        case Vlan::tpidCtag:
+        case (Vlan::tpidCtag):
         case Vlan::tpidStag:
             if ((size - currentOffset) < Vlan::rawSize) {
                 return false;

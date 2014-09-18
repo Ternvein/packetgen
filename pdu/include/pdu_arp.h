@@ -73,7 +73,7 @@ public:
     MacAddress GetSrcMac() const;
     bool SetSrcMac(const MacAddress &mac);
 
-    Header::Ethernet::VlanCollection GetVlans() const;
+    VlanCollection GetVlans() const;
     bool AddVlan(const Vlan &vlan);
     bool RemoveVlan(const Vlan &vlan);
 
@@ -91,6 +91,9 @@ public:
 
     Opcode GetOpcode() const;
     bool SetOpcode(const Opcode &protocol);
+
+    bool operator==(const Arp &right) const;
+    bool operator!=(const Arp &right) const;
 };
 
 }

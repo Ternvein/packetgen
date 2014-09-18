@@ -33,7 +33,7 @@ private:
     static const char defaultSrcIp[];
 
     static const unsigned short defaultHardwareType = 1;
-    static const Ethertype defaultProtocolType;
+    static const unsigned int defaultProtocolType = Header::Ethernet::ethertypeIpv4;
 
     static const unsigned char defaultHardwareSize = MacAddress::rawSize;
     static const unsigned char defaultProtocolSize = IpAddress::rawSize;

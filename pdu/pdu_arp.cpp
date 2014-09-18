@@ -12,7 +12,6 @@
 #include <iostream>
 
 
-const Ethertype Pdu::Arp::defaultProtocolType(Header::Ethernet::ethertypeIpv4);
 const char Pdu::Arp::defaultDstMac[] = "FF:FF:FF:FF:FF:FF";
 const char Pdu::Arp::defaultSrcMac[] = "00:13:AA:00:00:01";
 const char Pdu::Arp::defaultDstIp[] = "172.17.1.1";
@@ -40,8 +39,6 @@ void Pdu::Arp::Clear()
     __hardwareType = defaultHardwareType;
     __protocolType.Set(defaultProtocolType);
 
-    std::cerr << __protocolType.Get() << std::endl;
-
     __hardwareSize = defaultHardwareSize;
     __protocolSize = defaultProtocolSize;
 
@@ -55,7 +52,9 @@ void Pdu::Arp::Clear()
     MacAddress dstMac(defaultDstMac, sizeof(defaultDstMac));
     __ethernet.SetSrcMac(srcMac);
     __ethernet.SetDstMac(dstMac);
-    __ethernet.SetEthertype(Header::Ethernet::ethertypeArp);
+
+    Ethertype ethertype(Header::Ethernet::ethertypeArp);
+    __ethernet.SetEthertype(ethertype);
 }
 
 bool Pdu::Arp::Set(const Arp &arp)

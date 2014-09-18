@@ -9,7 +9,8 @@ echo "Compiling libs..."
 #Objects
 g++ -Wall -c -I./objects/include -o ./lib/macaddress.o ./objects/macaddress.cpp
 g++ -Wall -c -I./objects/include -o ./lib/ipaddress.o ./objects/ipaddress.cpp
-g++ -Wall -D_REENTERANT -c -I./objects/include -o ./lib/vlan.o ./objects/vlan.cpp
+g++ -Wall -c -I./objects/include -o ./lib/vlan.o ./objects/vlan.cpp
+g++ -Wall -c -I./objects/include -o ./lib/vlancollection.o ./objects/vlancollection.cpp
 
 #Headers
 g++ -Wall -c -I./objects/include -I./headers/include -o ./lib/header_ethernet.o ./headers/header_ethernet.cpp

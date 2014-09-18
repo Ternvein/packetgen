@@ -259,7 +259,7 @@ bool Pdu::Arp::SetSrcMac(const MacAddress &mac)
     return __ethernet.SetSrcMac(mac);
 }
 
-Header::Ethernet::VlanCollection Pdu::Arp::GetVlans() const
+VlanCollection Pdu::Arp::GetVlans() const
 {
     return __ethernet.GetVlans();
 }
@@ -328,4 +328,46 @@ bool Pdu::Arp::SetOpcode(const Opcode &opcode)
     __opcode = opcode;
 
     return true;
+}
+
+bool Pdu::Arp::operator==(const Arp &right) const
+{
+    if (__ethernet != right.__ethernet) {
+        return false;
+    }
+
+    if (__hardwareType != right.__hardwareType) {
+        return false;
+    }
+
+    if (__protocolType != right.__protocolType) {
+        return false;
+    }
+
+    if (__hardwareSize != right.__hardwareSize) {
+        return false;
+    }
+
+    if (__protocolSize != right.__protocolSize) {
+        return false;
+    }
+
+    if (__opcode != right.__opcode) {
+        return false;
+    }
+
+    if (__senderIp != right.__senderIp) {
+        return false;
+    }
+
+    if (__targetIp != right.__targetIp) {
+        return false;
+    }
+
+    return true;
+}
+
+bool Pdu::Arp::operator!=(const Arp &right) const
+{
+    return !operator==(right);
 }

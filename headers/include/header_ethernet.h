@@ -9,7 +9,8 @@
 #define HEADER_ETHERNET_H_
 
 #include "macaddress.h"
-#include "vlan.h"
+#include "vlancollection.h"
+
 #include <vector>
 
 
@@ -19,7 +20,6 @@ class Ethernet
 {
 public:
     typedef unsigned short Ethertype;
-    typedef std::vector<Vlan> VlanCollection;
 
     static const unsigned int rawMinSize = 15;
 
@@ -55,11 +55,16 @@ public:
     bool SetSrcMac(const MacAddress &mac);
 
     VlanCollection GetVlans() const;
+    bool SetVlans(const VlanCollection &vlans);
     bool AddVlan(const Vlan &vlan);
     bool RemoveVlan(const Vlan &vlan);
+    bool IsVlanPresent(const Vlan &vlan) const;
 
     Ethertype GetEthertype() const;
     bool SetEthertype(const Ethertype &ethertype);
+
+    bool operator==(const Ethernet &right) const;
+    bool operator!=(const Ethernet &right) const;
 };
 
 }

@@ -22,15 +22,15 @@ Header::Ethernet::Ethernet()
 
 Header::Ethernet::Ethernet(const Ethernet &ethernet)
 {
-    VlanCollection::const_iterator iter;
+    VlanCollection::ConstIterator iter;
 
     Clear();
 
     __dstMac = ethernet.__dstMac;
     __srcMac = ethernet.__srcMac;
 
-    for (iter = ethernet.__vlans.begin(); iter != ethernet.__vlans.end(); iter++) {
-        __vlans.push_back(*iter);
+    for (iter = ethernet.__vlans.Begin(); iter != ethernet.__vlans.End(); iter++) {
+        __vlans.Add(*iter);
     }
 
     __ethertype = ethernet.__ethertype;
@@ -45,20 +45,20 @@ void Header::Ethernet::Clear()
 {
     __dstMac.Clear();
     __srcMac.Clear();
-    __vlans.clear();
+    __vlans.Clear();
     __ethertype = 0;
 }
 
 bool Header::Ethernet::GetRaw(unsigned char *ethernet, unsigned int size, unsigned int *offset) const
 {
-    VlanCollection::const_iterator iter;
+    VlanCollection::ConstIterator iter;
 
     if (ethernet == NULL) {
         std::cerr << __PRETTY_FUNCTION__ << ": NULL header detected" << std::endl;
         return false;
     }
 
-    unsigned int vlansSize = __vlans.size() * Vlan::rawSize;
+    unsigned int vlansSize = __vlans.GetCount() * Vlan::rawSize;
     if (size < (rawMinSize + vlansSize)) {
         std::cerr << __PRETTY_FUNCTION__ << ": Header buffer size " << size
                   << " is too short" << std::endl;
@@ -79,7 +79,7 @@ bool Header::Ethernet::GetRaw(unsigned char *ethernet, unsigned int size, unsign
     }
 
     unsigned int currentOffset = ethertypeOffset;
-    for (iter = __vlans.begin(); iter != __vlans.end(); iter++) {
+    for (iter = __vlans.Begin(); iter != __vlans.End(); iter++) {
         rc = iter->GetRaw(&ethernetTemp[currentOffset], Vlan::rawSize);
         if (!rc) {
             return false;
@@ -190,31 +190,31 @@ bool Header::Ethernet::SetSrcMac(const MacAddress &mac)
     return __srcMac.Set(mac);
 }
 
-Header::Ethernet::VlanCollection Header::Ethernet::GetVlans() const
+VlanCollection Header::Ethernet::GetVlans() const
 {
     return __vlans;
 }
 
-bool Header::Ethernet::AddVlan(const Vlan &vlan)
+bool Header::Ethernet::SetVlans(const VlanCollection &vlans)
 {
-    __vlans.push_back(vlan);
+    __vlans = vlans;
 
     return true;
 }
 
+bool Header::Ethernet::AddVlan(const Vlan &vlan)
+{
+    return __vlans.Add(vlan);
+}
+
 bool Header::Ethernet::RemoveVlan(const Vlan &vlan)
 {
-    VlanCollection::iterator iter;
+    return __vlans.Remove(vlan);
+}
 
-    for (iter = __vlans.begin(); iter != __vlans.end(); iter++) {
-        if (*iter == vlan) {
-            __vlans.erase(iter);
-
-            return true;
-        }
-    }
-
-    return false;
+bool Header::Ethernet::IsVlanPresent(const Vlan &vlan) const
+{
+    return __vlans.IsMember(vlan);
 }
 
 Header::Ethernet::Ethertype Header::Ethernet::GetEthertype() const
@@ -231,4 +231,30 @@ bool Header::Ethernet::SetEthertype(const Ethertype &ethertype)
     __ethertype = ethertype;
 
     return true;
+}
+
+bool Header::Ethernet::operator==(const Ethernet &right) const
+{
+    if (__dstMac != right.__dstMac) {
+        return false;
+    }
+
+    if (__srcMac != right.__srcMac) {
+        return false;
+    }
+
+    if (__ethertype != right.__ethertype) {
+        return false;
+    }
+
+    if (__vlans != right.__vlans) {
+        return false;
+    }
+
+    return true;
+}
+
+bool Header::Ethernet::operator!=(const Ethernet &right) const
+{
+    return !operator==(right);
 }

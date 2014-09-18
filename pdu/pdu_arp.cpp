@@ -38,7 +38,9 @@ void Pdu::Arp::Clear()
     __ethernet.Clear();
 
     __hardwareType = defaultHardwareType;
-    __protocolType = defaultProtocolType;
+    __protocolType.Set(defaultProtocolType);
+
+    std::cerr << __protocolType.Get() << std::endl;
 
     __hardwareSize = defaultHardwareSize;
     __protocolSize = defaultProtocolSize;
@@ -94,20 +96,23 @@ bool Pdu::Arp::GetRaw(unsigned char *arp, unsigned int size, unsigned int *offse
         return false;
     }
 
-    memcpy(&arpTemp[currentOffset], &__hardwareType, sizeof(__hardwareType));
+    Object::ConvertToRaw(&arpTemp[currentOffset], __hardwareType);
     currentOffset += sizeof(__hardwareType);
 
-    memcpy(&arpTemp[currentOffset], &__protocolType, sizeof(__protocolType));
-    currentOffset += sizeof(__protocolType);
+    rc = __protocolType.GetRaw(&arpTemp[currentOffset], Ethertype::rawSize);
+    if (!rc) {
+        return false;
+    }
+    currentOffset += Ethertype::rawSize;
 
-    memcpy(&arpTemp[currentOffset], &__hardwareSize, sizeof(__hardwareSize));
+    arpTemp[currentOffset] = __hardwareSize;
     currentOffset += sizeof(__hardwareSize);
 
-    memcpy(&arpTemp[currentOffset], &__protocolSize, sizeof(__protocolSize));
+    arpTemp[currentOffset] = __protocolSize;
     currentOffset += sizeof(__protocolSize);
 
-    memcpy(&arpTemp[currentOffset], &__opcode, sizeof(__opcode));
-    currentOffset += sizeof(__opcode);
+    Object::ConvertToRaw(&arpTemp[currentOffset], static_cast<unsigned short>(__opcode));
+    currentOffset += sizeof(unsigned short);
 
     rc = __ethernet.GetSrcMac().GetRaw(&arpTemp[currentOffset], size - currentOffset);
     if (!rc) {

@@ -17,15 +17,22 @@ class Object
     static const unsigned int bitsInByte = 8;
     static const unsigned int byteMask = 0xFF;
 
+    static const char toStringNotSupported[];
+
 protected:
     static unsigned int GetByteMask(unsigned int offset);
+
+    static void ToStringNotSupported(char *buffer, unsigned int size);
+
+public:
+    virtual ~Object();
 
     static bool ConvertToRaw(unsigned char *buffer, const unsigned long long int object);
     static bool ConvertToRaw(unsigned char *buffer, const unsigned int object);
     static bool ConvertToRaw(unsigned char *buffer, const unsigned short object);
 
-public:
-    virtual ~Object();
+    virtual unsigned int GetStringSize() const = 0;
+    virtual bool ToString(char *buffer, unsigned int size) const = 0;
 };
 
 

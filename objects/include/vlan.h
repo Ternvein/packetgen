@@ -21,6 +21,7 @@ public:
     typedef unsigned short Vid;
 
     static const unsigned int rawSize = 4;
+    static const unsigned int stringMinSize = 5;
 
     static const Tpid tpidCtag = 0x8100;
     static const Tpid tpidStag = 0x88A8;
@@ -82,6 +83,9 @@ public:
     Vid GetVid() const;
     bool SetVid(const Vid &vid);
     static bool IsVidValid(const Vid &vid);
+
+    unsigned int GetStringSize() const;
+    bool ToString(char *buffer, unsigned int size) const;
 
     bool operator==(const Vlan &right) const;
     bool operator!=(const Vlan &right) const;

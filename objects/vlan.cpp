@@ -278,6 +278,29 @@ bool Vlan::IsVidValid(const Vid &vid)
     return true;
 }
 
+unsigned int Vlan::GetStringSize() const
+{
+    return stringMinSize;
+}
+
+bool Vlan::ToString(char *buffer, unsigned int size) const
+{
+    if (buffer == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL VLAN detected" << std::endl;
+        return false;
+    }
+
+    if (size < stringMinSize) {
+        std::cerr << __PRETTY_FUNCTION__ << ": VLAN buffer size " << size
+                  << " is too short" << std::endl;
+        return false;
+    }
+
+    snprintf(buffer, size, "%04x", __raw & vidMask);
+
+    return true;
+}
+
 bool Vlan::operator==(const Vlan &right) const
 {
     if (__raw == right.__raw) {

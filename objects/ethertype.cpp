@@ -88,6 +88,29 @@ bool Ethertype::SetRaw(const unsigned char *ethertype, unsigned int size)
     return true;
 }
 
+unsigned int Ethertype::GetStringSize() const
+{
+    return stringMinSize;
+}
+
+bool Ethertype::ToString(char *buffer, unsigned int size) const
+{
+    if (buffer == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL buffer detected" << std::endl;
+        return false;
+    }
+
+    if (size < stringMinSize) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Ethertype buffer size " << size
+                  << " is too short" << std::endl;
+        return false;
+    }
+
+    snprintf(buffer, size, "%04x", __raw);
+
+    return true;
+}
+
 bool Ethertype::operator==(const Ethertype &right) const
 {
     if (__raw != right.__raw) {

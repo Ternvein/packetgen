@@ -15,6 +15,7 @@ class Ethertype : public Object
 {
 public:
     static const unsigned int rawSize = 2;
+    static const unsigned int stringMinSize = 5;
 
 private:
     unsigned short __raw;
@@ -34,6 +35,9 @@ public:
 
     bool GetRaw(unsigned char *ethertype, unsigned int size) const;
     bool SetRaw(const unsigned char *ethertype, unsigned int size);
+
+    unsigned int GetStringSize() const;
+    bool ToString(char *buffer, unsigned int size) const;
 
     bool operator==(const Ethertype &right) const;
     bool operator!=(const Ethertype &right) const;

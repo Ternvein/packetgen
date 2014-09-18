@@ -8,6 +8,8 @@
 #include "object.h"
 
 
+const char Object::toStringNotSupported[] = "Output not supported";
+
 Object::~Object()
 {
 
@@ -49,4 +51,20 @@ bool Object::ConvertToRaw(unsigned char *buffer, const unsigned short object)
     }
 
     return true;
+}
+
+void Object::ToStringNotSupported(char *buffer, unsigned int size)
+{
+    if (buffer == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL buffer detected" << std::endl;
+        return;
+    }
+
+    if (size < sizeof(toStringNotSupported)) {
+        std::cerr << __PRETTY_FUNCTION__ << ": buffer size " << size
+                  << " is too short" << std::endl;
+        return;
+    }
+
+    snprintf(buffer, size, "%s", toStringNotSupported);
 }

@@ -8,13 +8,15 @@
 #ifndef IPADDRESS_H_
 #define IPADDRESS_H_
 
+#include "object.h"
 
-class IpAddress
+
+class IpAddress : public Object
 {
 public:
     static const unsigned int rawSize = 4;
-    static const unsigned int stringSizeMin = 8;
-    static const unsigned int stringSizeMax = 16;
+    static const unsigned int stringMinSize = 8;
+    static const unsigned int stringMaxSize = 16;
 
 private:
     static const unsigned int multicastIp = 0xE0000000;
@@ -50,11 +52,12 @@ public:
 
     bool Set(const IpAddress &ip);
 
-    bool Parse(const char *ip, unsigned int size);
-    bool ToString(char *ip, unsigned int size) const;
-
     bool IsMulticast() const;
     bool IsBroadcast() const;
+
+    unsigned int GetStringSize() const;
+    bool Parse(const char *ip, unsigned int size);
+    bool ToString(char *ip, unsigned int size) const;
 
     bool operator==(const IpAddress &right) const;
     bool operator!=(const IpAddress &right) const;

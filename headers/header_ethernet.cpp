@@ -88,11 +88,14 @@ bool Header::Ethernet::GetRaw(unsigned char *ethernet, unsigned int size, unsign
         currentOffset += Vlan::rawSize;
     }
 
-    memcpy(&ethernetTemp[currentOffset], &__ethertype, sizeof(__ethertype));
+    for (int i = sizeof(__ethertype) - 1; i >= 0; i--) {
+        ethernetTemp[currentOffset] = (__ethertype & (0xFF << (i * 8))) >> i * 8;
+        currentOffset++;
+    }
+
     memcpy(ethernet, ethernetTemp, size);
 
     if (offset != NULL) {
-        currentOffset += sizeof(__ethertype);
         *offset = currentOffset;
     }
 

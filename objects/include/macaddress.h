@@ -8,12 +8,14 @@
 #ifndef MACADDRESS_H_
 #define MACADDRESS_H_
 
+#include "object.h"
 
-class MacAddress
+
+class MacAddress : public Object
 {
 public:
     static const unsigned int rawSize = 6;
-    static const unsigned int stringSize = 18;
+    static const unsigned int stringMinSize = 18;
 
 private:
     unsigned char __raw[rawSize];
@@ -38,11 +40,12 @@ public:
 
     bool Set(const MacAddress &mac);
 
-    bool Parse(const char *mac, unsigned int size);
-    bool ToString(char *mac, unsigned int size) const;
-
     bool IsMulticast() const;
     bool IsBroadcast() const;
+
+    unsigned int GetStringSize() const;
+    bool Parse(const char *mac, unsigned int size);
+    bool ToString(char *mac, unsigned int size) const;
 
     bool operator==(const MacAddress &right) const;
     bool operator!=(const MacAddress &right) const;

@@ -12,7 +12,6 @@
 #include <iostream>
 
 
-const Ethertype Pdu::Arp::defaultProtocolType(Header::Ethernet::ethertypeIpv4);
 const char Pdu::Arp::defaultDstMac[] = "FF:FF:FF:FF:FF:FF";
 const char Pdu::Arp::defaultSrcMac[] = "00:13:AA:00:00:01";
 const char Pdu::Arp::defaultDstIp[] = "172.17.1.1";
@@ -38,7 +37,7 @@ void Pdu::Arp::Clear()
     __ethernet.Clear();
 
     __hardwareType = defaultHardwareType;
-    __protocolType = defaultProtocolType;
+    __protocolType.Set(defaultProtocolType);
 
     __hardwareSize = defaultHardwareSize;
     __protocolSize = defaultProtocolSize;
@@ -53,7 +52,9 @@ void Pdu::Arp::Clear()
     MacAddress dstMac(defaultDstMac, sizeof(defaultDstMac));
     __ethernet.SetSrcMac(srcMac);
     __ethernet.SetDstMac(dstMac);
-    __ethernet.SetEthertype(Header::Ethernet::ethertypeArp);
+
+    Ethertype ethertype(Header::Ethernet::ethertypeArp);
+    __ethernet.SetEthertype(ethertype);
 }
 
 bool Pdu::Arp::Set(const Arp &arp)
@@ -94,20 +95,23 @@ bool Pdu::Arp::GetRaw(unsigned char *arp, unsigned int size, unsigned int *offse
         return false;
     }
 
-    memcpy(&arpTemp[currentOffset], &__hardwareType, sizeof(__hardwareType));
+    Object::ConvertToRaw(&arpTemp[currentOffset], __hardwareType);
     currentOffset += sizeof(__hardwareType);
 
-    memcpy(&arpTemp[currentOffset], &__protocolType, sizeof(__protocolType));
-    currentOffset += sizeof(__protocolType);
+    rc = __protocolType.GetRaw(&arpTemp[currentOffset], Ethertype::rawSize);
+    if (!rc) {
+        return false;
+    }
+    currentOffset += Ethertype::rawSize;
 
-    memcpy(&arpTemp[currentOffset], &__hardwareSize, sizeof(__hardwareSize));
+    arpTemp[currentOffset] = __hardwareSize;
     currentOffset += sizeof(__hardwareSize);
 
-    memcpy(&arpTemp[currentOffset], &__protocolSize, sizeof(__protocolSize));
+    arpTemp[currentOffset] = __protocolSize;
     currentOffset += sizeof(__protocolSize);
 
-    memcpy(&arpTemp[currentOffset], &__opcode, sizeof(__opcode));
-    currentOffset += sizeof(__opcode);
+    Object::ConvertToRaw(&arpTemp[currentOffset], static_cast<unsigned short>(__opcode));
+    currentOffset += sizeof(unsigned short);
 
     rc = __ethernet.GetSrcMac().GetRaw(&arpTemp[currentOffset], size - currentOffset);
     if (!rc) {

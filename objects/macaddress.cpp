@@ -95,6 +95,11 @@ bool MacAddress::Set(const MacAddress &mac)
     return true;
 }
 
+unsigned int MacAddress::GetStringSize() const
+{
+    return stringMinSize;
+}
+
 bool MacAddress::Parse(const char *mac, unsigned int size)
 {
     Clear();
@@ -104,7 +109,7 @@ bool MacAddress::Parse(const char *mac, unsigned int size)
         return false;
     }
 
-    if (size < stringSize) {
+    if (size < stringMinSize) {
         std::cerr << __PRETTY_FUNCTION__ << ": MAC buffer size " << size
                   << " is too short" << std::endl;
         return false;
@@ -156,7 +161,7 @@ bool MacAddress::ToString(char *mac, unsigned int size) const
         return false;
     }
 
-    if (size < stringSize) {
+    if (size < stringMinSize) {
         std::cerr << __PRETTY_FUNCTION__ << ": MAC buffer size " << size
                   << " is too short" << std::endl;
         return false;
@@ -168,7 +173,7 @@ bool MacAddress::ToString(char *mac, unsigned int size) const
         offset += 3;
     }
 
-    mac[stringSize - 1] = '\0';
+    mac[stringMinSize - 1] = '\0';
 
     return true;
 }

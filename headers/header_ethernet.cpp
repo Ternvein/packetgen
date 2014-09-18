@@ -12,9 +12,6 @@
 #include <iostream>
 
 
-const Ethertype Header::Ethernet::ethertypeArp(0x0806);
-const Ethertype Header::Ethernet::ethertypeIpv4(0x0800);
-
 Header::Ethernet::Ethernet()
 {
     Clear();

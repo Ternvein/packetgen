@@ -22,8 +22,8 @@ class Ethernet
 public:
     static const unsigned int rawMinSize = 15;
 
-    static const Ethertype ethertypeArp;
-    static const Ethertype ethertypeIpv4;
+    static const unsigned int ethertypeArp = 0x0806;
+    static const unsigned int ethertypeIpv4 = 0x0800;
 
 private:
     static const unsigned int dstMacOffset = 0;

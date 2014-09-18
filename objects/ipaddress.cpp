@@ -94,6 +94,11 @@ bool IpAddress::Set(const IpAddress &ip)
     return true;
 }
 
+unsigned int IpAddress::GetStringSize() const
+{
+    return stringMaxSize;
+}
+
 bool IpAddress::Parse(const char *ip, unsigned int size)
 {
     Clear();
@@ -103,7 +108,7 @@ bool IpAddress::Parse(const char *ip, unsigned int size)
         return false;
     }
 
-    if (size < stringSizeMin || size > stringSizeMax) {
+    if (size < stringMinSize || size > stringMaxSize) {
         std::cerr << __PRETTY_FUNCTION__ << ": IP buffer size " << size
                   << " is too short" << std::endl;
         return false;
@@ -132,7 +137,7 @@ bool IpAddress::ToString(char *ip, unsigned int size) const
         return false;
     }
 
-    if (size < stringSizeMin || size > stringSizeMax) {
+    if (size < stringMaxSize) {
         std::cerr << __PRETTY_FUNCTION__ << ": IP buffer size " << size
                   << " is too short" << std::endl;
         return false;

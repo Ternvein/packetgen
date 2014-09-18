@@ -33,7 +33,7 @@ private:
     static const char defaultSrcIp[];
 
     static const unsigned short defaultHardwareType = 1;
-    static const Header::Ethernet::Ethertype defaultProtocolType = Header::Ethernet::ethertypeIpv4;
+    static const Ethertype defaultProtocolType;
 
     static const unsigned char defaultHardwareSize = MacAddress::rawSize;
     static const unsigned char defaultProtocolSize = IpAddress::rawSize;
@@ -45,7 +45,7 @@ private:
     Header::Ethernet __ethernet;
 
     unsigned short __hardwareType;
-    Header::Ethernet::Ethertype __protocolType;
+    Ethertype __protocolType;
 
     unsigned char __hardwareSize;
     unsigned char __protocolSize;
@@ -86,8 +86,8 @@ public:
     unsigned short GetHardwareType() const;
     bool SetHardwareType(unsigned short hardware);
 
-    Header::Ethernet::Ethertype GetProtocolType() const;
-    bool SetProtocolType(const Header::Ethernet::Ethertype &protocol);
+    Ethertype GetProtocolType() const;
+    bool SetProtocolType(const Ethertype &protocol);
 
     Opcode GetOpcode() const;
     bool SetOpcode(const Opcode &protocol);

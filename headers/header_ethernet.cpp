@@ -12,8 +12,8 @@
 #include <iostream>
 
 
-const Header::Ethernet::Ethertype Header::Ethernet::ethertypeArp;
-const Header::Ethernet::Ethertype Header::Ethernet::ethertypeIpv4;
+const Ethertype Header::Ethernet::ethertypeArp(0x0806);
+const Ethertype Header::Ethernet::ethertypeIpv4(0x0800);
 
 Header::Ethernet::Ethernet()
 {
@@ -88,11 +88,12 @@ bool Header::Ethernet::GetRaw(unsigned char *ethernet, unsigned int size, unsign
         currentOffset += Vlan::rawSize;
     }
 
-    memcpy(&ethernetTemp[currentOffset], &__ethertype, sizeof(__ethertype));
+    __ethertype.GetRaw(&ethernetTemp[currentOffset], Ethertype::rawSize);
+
     memcpy(ethernet, ethernetTemp, size);
 
     if (offset != NULL) {
-        currentOffset += sizeof(__ethertype);
+        currentOffset += Ethertype::rawSize;
         *offset = currentOffset;
     }
 
@@ -130,8 +131,8 @@ bool Header::Ethernet::SetRaw(const unsigned char *ethernet, unsigned int size, 
     Vlan vlan;
     unsigned int currentOffset = ethertypeOffset;
     while (currentOffset < size) {
-        ethertype = *reinterpret_cast<const Ethertype *>(&ethernet[currentOffset]);
-        switch (ethertype) {
+        ethertype.SetRaw(&ethernet[currentOffset], Ethertype::rawSize);
+        switch (ethertype.Get()) {
         case Vlan::tpidCtag:
         case Vlan::tpidStag:
             if ((size - currentOffset) < Vlan::rawSize) {
@@ -217,14 +218,14 @@ bool Header::Ethernet::IsVlanPresent(const Vlan &vlan) const
     return __vlans.IsMember(vlan);
 }
 
-Header::Ethernet::Ethertype Header::Ethernet::GetEthertype() const
+Ethertype Header::Ethernet::GetEthertype() const
 {
     return __ethertype;
 }
 
 bool Header::Ethernet::SetEthertype(const Ethertype &ethertype)
 {
-    if (ethertype == Vlan::tpidCtag || ethertype == Vlan::tpidStag) {
+    if (ethertype.Get() == Vlan::tpidCtag || ethertype.Get() == Vlan::tpidStag) {
         return false;
     }
 

@@ -65,7 +65,7 @@ bool Vlan::GetRaw(unsigned char *vlan, unsigned int size) const
         return false;
     }
 
-    memcpy(vlan, &__raw, rawSize);
+    ConvertToRaw(vlan, __raw);
 
     return true;
 }
@@ -294,7 +294,9 @@ bool Vlan::operator!=(const Vlan &right) const
 
 Vlan Vlan::operator++()
 {
-    __raw = (__raw + 1) & vidMask;
+    unsigned int vid = (__raw + 1) & vidMask;
+    __raw &= ~vidMask;
+    __raw |= vid;
 
     return *this;
 }

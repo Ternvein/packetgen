@@ -8,8 +8,10 @@
 #ifndef VLAN_H_
 #define VLAN_H_
 
+#include "object.h"
 
-class Vlan
+
+class Vlan : public Object
 {
 public:
     typedef unsigned short Tpid;

@@ -26,6 +26,27 @@ int main()
         std::cerr << "Main: Can't get raw ARP" << std::endl;
     }
 
+    char buffer[100];
+    std::cout << "Statistic PDU 1:" << std::endl;
+    arp.GetDstMac().ToString(buffer, sizeof(buffer));
+    std::cout << "DstMac: " << buffer << std::endl;
+    arp.GetSrcMac().ToString(buffer, sizeof(buffer));
+    std::cout << "SrcMac: " << buffer << std::endl;
+    VlanCollection vlans = arp.GetVlans();
+    VlanCollection::ConstIterator iter;
+    for (iter = vlans.Begin(); iter != vlans.End(); iter++) {
+        std::cout << "__________" << std::endl;
+        std::cout << "CoS: " << iter->GetCos() << std::endl;
+        std::cout << "Dropped: " << (iter->IsDei() ? "yes" : "no") << std::endl;
+        std::cout << "VID: " << iter->GetVid() << std::endl;
+    }
+    std::cout << "__________" << std::endl;
+    std::cout << "Ethertype: " << arp.GetProtocolType().Get() << std::endl;
+    arp.GetSrcIp().ToString(buffer, sizeof(buffer));
+    std::cout << "SenderIp: " << buffer << std::endl;
+    arp.GetDstIp().ToString(buffer, sizeof(buffer));
+    std::cout << "TargetIp: " << buffer << std::endl;
+
     MacAddress mac(arp.GetDstMac());
     mac++;
     arp.SetDstMac(mac);

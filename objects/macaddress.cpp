@@ -116,12 +116,15 @@ bool MacAddress::Parse(const char *mac, unsigned int size)
     int rc;
 
     while (mac[offset] != '\0') {
-        rc = sscanf(&mac[offset], "%x", &raw[octet]);
+        unsigned int byte;
+        rc = sscanf(&mac[offset], "%x", &byte);
         if (rc != 1) {
             std::cerr << __PRETTY_FUNCTION__ << ": Error reading byte "
                       << offset << " from buffer" << std::endl;
             return false;
         }
+
+        raw[octet] = static_cast<unsigned char>(byte);
 
         octet++;
         if (octet >= rawSize) {
@@ -161,11 +164,11 @@ bool MacAddress::ToString(char *mac, unsigned int size) const
 
     unsigned int offset = 0;
     for (unsigned int i = 0; i < rawSize; i++) {
-        snprintf(&mac[offset], 3, "%02X:", __raw[i]);
+        snprintf(&mac[offset], 4, "%02X:", __raw[i]);
         offset += 3;
     }
 
-    mac[stringSize] = '\0';
+    mac[stringSize - 1] = '\0';
 
     return true;
 }

@@ -85,6 +85,7 @@ public:
     static bool IsVidValid(const Vid &vid);
 
     unsigned int GetStringSize() const;
+    bool Parse(const char *buffer, unsigned int size);
     bool ToString(char *buffer, unsigned int size) const;
 
     bool operator==(const Vlan &right) const;

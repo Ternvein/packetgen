@@ -93,6 +93,27 @@ unsigned int Ethertype::GetStringSize() const
     return stringMinSize;
 }
 
+bool Ethertype::Parse(const char *buffer, unsigned int size)
+{
+    if (buffer == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL buffer detected" << std::endl;
+        return false;
+    }
+
+    if (size < stringMinSize) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Ethertype buffer size " << size
+                  << " is too short" << std::endl;
+        return false;
+    }
+
+    unsigned int raw;
+    sscanf(buffer, "%x", &raw);
+
+    __raw = static_cast<unsigned short>(raw);
+
+    return true;
+}
+
 bool Ethertype::ToString(char *buffer, unsigned int size) const
 {
     if (buffer == NULL) {

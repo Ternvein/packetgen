@@ -283,6 +283,34 @@ unsigned int Vlan::GetStringSize() const
     return stringMinSize;
 }
 
+bool Vlan::Parse(const char *buffer, unsigned int size)
+{
+    Clear();
+
+    if (buffer == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL VLAN detected" << std::endl;
+        return false;
+    }
+
+    if (size < stringMinSize) {
+        std::cerr << __PRETTY_FUNCTION__ << ": VLAN buffer size " << size
+                  << " is too short" << std::endl;
+        return false;
+    }
+
+    unsigned int raw;
+    int rc = sscanf(buffer, "%x", &raw);
+    if (rc != 1) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Error reading VLAN buffer" << std::endl;
+        return false;
+    }
+
+    __raw &= ~vidMask;
+    __raw |= raw & vidMask;
+
+    return true;
+}
+
 bool Vlan::ToString(char *buffer, unsigned int size) const
 {
     if (buffer == NULL) {

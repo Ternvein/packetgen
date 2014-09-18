@@ -37,6 +37,7 @@ public:
     bool SetRaw(const unsigned char *ethertype, unsigned int size);
 
     unsigned int GetStringSize() const;
+    bool Parse(const char *buffer, unsigned int size);
     bool ToString(char *buffer, unsigned int size) const;
 
     bool operator==(const Ethertype &right) const;

@@ -32,6 +32,7 @@ public:
     static bool ConvertToRaw(unsigned char *buffer, const unsigned short object);
 
     virtual unsigned int GetStringSize() const = 0;
+    virtual bool Parse(const char *buffer, unsigned int size) = 0;
     virtual bool ToString(char *buffer, unsigned int size) const = 0;
 };
 

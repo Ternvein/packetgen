@@ -65,11 +65,7 @@ bool Vlan::GetRaw(unsigned char *vlan, unsigned int size) const
         return false;
     }
 
-    unsigned int offset = 0;
-    for (int i = rawSize - 1; i >= 0; i--) {
-        vlan[offset] = (__raw & (0xFF << (i * 8))) >> (i * 8);
-        offset++;
-    }
+    ConvertToRaw(vlan, __raw);
 
     return true;
 }

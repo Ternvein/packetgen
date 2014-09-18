@@ -12,6 +12,7 @@
 #include <iostream>
 
 
+const Ethertype Pdu::Arp::defaultProtocolType(Header::Ethernet::ethertypeIpv4);
 const char Pdu::Arp::defaultDstMac[] = "FF:FF:FF:FF:FF:FF";
 const char Pdu::Arp::defaultSrcMac[] = "00:13:AA:00:00:01";
 const char Pdu::Arp::defaultDstIp[] = "172.17.1.1";
@@ -166,7 +167,7 @@ bool Pdu::Arp::SetRaw(const unsigned char *arp, unsigned int size, unsigned int 
     __hardwareType = *reinterpret_cast<const unsigned short *>(&arp[currentOffset]);
     currentOffset += sizeof(__hardwareType);
 
-    __protocolType = *reinterpret_cast<const Header::Ethernet::Ethertype *>(&arp[currentOffset]);
+    __protocolType.SetRaw(&arp[currentOffset], Ethertype::rawSize);
     currentOffset += sizeof(__protocolType);
 
     __hardwareSize = *reinterpret_cast<const unsigned char *>(&arp[currentOffset]);
@@ -306,12 +307,12 @@ bool Pdu::Arp::SetHardwareType(unsigned short hardware)
     return true;
 }
 
-Header::Ethernet::Ethertype Pdu::Arp::GetProtocolType() const
+Ethertype Pdu::Arp::GetProtocolType() const
 {
     return __protocolType;
 }
 
-bool Pdu::Arp::SetProtocolType(const Header::Ethernet::Ethertype &protocol)
+bool Pdu::Arp::SetProtocolType(const Ethertype &protocol)
 {
     __protocolType = protocol;
 

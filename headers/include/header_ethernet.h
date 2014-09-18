@@ -9,6 +9,7 @@
 #define HEADER_ETHERNET_H_
 
 #include "macaddress.h"
+#include "ethertype.h"
 #include "vlancollection.h"
 
 #include <vector>
@@ -19,12 +20,10 @@ namespace Header {
 class Ethernet
 {
 public:
-    typedef unsigned short Ethertype;
-
     static const unsigned int rawMinSize = 15;
 
-    static const Ethertype ethertypeArp = 0x0806;
-    static const Ethertype ethertypeIpv4 = 0x0800;
+    static const Ethertype ethertypeArp;
+    static const Ethertype ethertypeIpv4;
 
 private:
     static const unsigned int dstMacOffset = 0;

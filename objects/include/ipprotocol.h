@@ -13,16 +13,26 @@
 
 class IpProtocol : public Object
 {
-    unsigned short __raw;
+public:
+    static const unsigned char protocolMask = 0xFF;
+    static const unsigned int rawSize = 1;
+    static const unsigned int stringMinSize = 3;
+
+private:
+    unsigned char __raw;
 
 public:
     IpProtocol();
     IpProtocol(const IpProtocol &protocol);
-    IpProtocol(unsigned short protocol);
+    IpProtocol(unsigned char protocol);
     ~IpProtocol();
 
+    void Clear();
+
     void Set(const IpProtocol &protocol);
-    unsigned short Get() const;
+
+    bool Set(unsigned char protocol);
+    unsigned char Get() const;
 
     bool GetRaw(unsigned char *buffer, unsigned int size) const;
     bool SetRaw(const unsigned char *buffer, unsigned int size);

@@ -27,9 +27,10 @@ protected:
 public:
     virtual ~Object();
 
-    static bool ConvertToRaw(unsigned char *buffer, const unsigned long long int object);
-    static bool ConvertToRaw(unsigned char *buffer, const unsigned int object);
-    static bool ConvertToRaw(unsigned char *buffer, const unsigned short object);
+    static bool ConvertToRaw(unsigned char *buffer, unsigned long long int object);
+    static bool ConvertToRaw(unsigned char *buffer, unsigned int object);
+    static bool ConvertToRaw(unsigned char *buffer, unsigned short object);
+    static bool ConvertToRaw(unsigned char *buffer, unsigned char object);
 
     virtual unsigned int GetStringSize() const = 0;
     virtual bool Parse(const char *buffer, unsigned int size) = 0;

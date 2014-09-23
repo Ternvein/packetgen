@@ -80,18 +80,20 @@ bool Object::ConvertToRaw(unsigned char *buffer, unsigned char object)
     return true;
 }
 
-void Object::ToStringNotSupported(char *buffer, unsigned int size)
+bool Object::ToStringNotSupported(char *buffer, unsigned int size)
 {
     if (buffer == NULL) {
         std::cerr << __PRETTY_FUNCTION__ << ": NULL buffer detected" << std::endl;
-        return;
+        return false;
     }
 
     if (size < sizeof(toStringNotSupported)) {
         std::cerr << __PRETTY_FUNCTION__ << ": buffer size " << size
                   << " is too short" << std::endl;
-        return;
+        return false;
     }
 
     snprintf(buffer, size, "%s", toStringNotSupported);
+
+    return true;
 }

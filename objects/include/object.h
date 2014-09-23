@@ -22,7 +22,7 @@ class Object
 protected:
     static unsigned int GetByteMask(unsigned int offset);
 
-    static void ToStringNotSupported(char *buffer, unsigned int size);
+    static bool ToStringNotSupported(char *buffer, unsigned int size);
 
 public:
     virtual ~Object();

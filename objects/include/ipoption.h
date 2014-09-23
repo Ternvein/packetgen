@@ -18,6 +18,12 @@ public:
     static const unsigned int stringMinSize = 5;
 
 private:
+    static const unsigned char copiedMask = 0x80;
+    static const unsigned char classMask = 0x60;
+    static const unsigned char numberMask = 0x1F;
+
+    static const unsigned int classOffset = 5;
+
     unsigned char __header;
     unsigned char *__data;
 
@@ -39,10 +45,18 @@ public:
     bool Parse(const char *buffer, unsigned int size);
     bool ToString(char *buffer, unsigned int size) const;
 
+    void EnableCopied();
+    void DisableCopied();
+    bool IsCopied() const;
+
+    bool SetClass(unsigned int optionClass);
+    unsigned int GetClass() const;
+
+    bool SetNumber(unsigned int number);
+    unsigned int GetNumber() const;
+
     bool operator==(const IpOption &right) const;
     bool operator!=(const IpOption &right) const;
-    IpOption operator++();
-    IpOption operator++(int);
 };
 
 

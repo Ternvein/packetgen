@@ -7,6 +7,9 @@
 
 #include "ipoption.h"
 
+#include <stdio.h>
+#include <string.h>
+
 
 IpOption::IpOption()
 {
@@ -59,7 +62,7 @@ bool IpOption::GetRaw(unsigned char *buffer, unsigned int size) const
         return false;
     }
 
-    unsigned char *raw;
+    unsigned char raw[size];
     bool rc = ConvertToRaw(raw, __header);
     if (!rc) {
         std::cerr << __PRETTY_FUNCTION__ << ": Error writing IP option header to buffer" << std::endl;
@@ -99,15 +102,92 @@ bool IpOption::SetRaw(const unsigned char *buffer, unsigned int size)
         return false;
     }
 
-    unsigned short header = *reinterpret_cast<const unsigned short *>(buffer);
-    unsigned int dataSize = header &
+    __header = buffer[0];
+    __data = new unsigned char;
+    __data[0] = buffer[1];
+
+    return true;
 }
 
-unsigned int IpOption::GetStringSize() const;
-bool IpOption::Parse(const char *buffer, unsigned int size);
-bool IpOption::ToString(char *buffer, unsigned int size) const;
+unsigned int IpOption::GetStringSize() const
+{
+    return stringMinSize;
+}
 
-bool IpOption::operator==(const IpOption &right) const;
-bool IpOption::operator!=(const IpOption &right) const;
-IpOption IpOption::operator++();
-IpOption IpOption::operator++(int);
+bool IpOption::Parse(const char *buffer, unsigned int size)
+{
+    return false;
+}
+
+bool IpOption::ToString(char *buffer, unsigned int size) const
+{
+    return ToStringNotSupported(buffer, size);
+}
+
+void IpOption::EnableCopied()
+{
+    __header |= copiedMask;
+}
+
+void IpOption::DisableCopied()
+{
+    __header &= ~copiedMask;
+}
+
+bool IpOption::IsCopied() const
+{
+    if (__header & copiedMask) {
+        return true;
+    }
+
+    return false;
+}
+
+bool IpOption::SetClass(unsigned int optionClass)
+{
+    __header &= ~classMask;
+    __header |= (optionClass << classOffset) & classMask;
+
+    return true;
+}
+
+unsigned int IpOption::GetClass() const
+{
+    return (__header & classMask) >> classOffset;
+}
+
+bool IpOption::SetNumber(unsigned int number)
+{
+    __header &= ~numberMask;
+    __header |= (number & numberMask);
+
+    return true;
+}
+
+unsigned int IpOption::GetNumber() const
+{
+    return (__header & numberMask);
+}
+
+bool IpOption::operator==(const IpOption &right) const
+{
+    if (__header != right.__header) {
+        return false;
+    }
+
+    if (__dataSize != right.__dataSize) {
+        return false;
+    }
+
+    int rc = memcmp(__data, right.__data, __dataSize);
+    if (rc != 0) {
+        return false;
+    }
+
+    return true;
+}
+
+bool IpOption::operator!=(const IpOption &right) const
+{
+    return !operator==(right);
+}

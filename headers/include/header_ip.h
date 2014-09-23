@@ -9,6 +9,7 @@
 #define HEADER_IP_H_
 
 #include "ipaddress.h"
+#include "ipprotocol.h"
 
 
 namespace Header {
@@ -16,10 +17,11 @@ namespace Header {
 class Ip
 {
 public:
-    static const unsigned int rawMinSize = 15;
+    static const unsigned int rawMinSize = 20;
 
-    static const unsigned int ethertypeArp = 0x0806;
-    static const unsigned int ethertypeIpv4 = 0x0800;
+    static const unsigned int versionIpv4 = 4;
+
+    static const unsigned int defaultTtl = 128;
 
 private:
     static const unsigned int versionOffset = 0;
@@ -42,7 +44,12 @@ private:
     static const unsigned int dscpMask = 0xFC;
     static const unsigned int ecnMask = 0x03;
     static const unsigned int flagsMask = 0xE0;
+    static const unsigned int flagDfMask = 0x40;
+    static const unsigned int flagMfMask = 0x20;
     static const unsigned int fragmentFieldMask = 0x1FFF;
+
+    static const unsigned int versionMaskOffset = 4;
+    static const unsigned int dscpMaskOffset = 2;
 
     unsigned char __version;
     unsigned char __headerLength;
@@ -70,6 +77,17 @@ public:
     ~Ip();
 
     void Clear();
+
+    void Set(const Ip &ip);
+
+    bool GetRaw(unsigned char *buffer, unsigned int size) const;
+    bool SetRaw(const unsigned char *buffer, unsigned int size);
+
+    bool SetHeaderLength(unsigned int length);
+    unsigned int GetHeaderLength() const;
+
+    bool operator==(const Ip &right) const;
+    bool operator!=(const Ip &right) const;
 };
 
 }

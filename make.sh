@@ -13,11 +13,13 @@ g++ -Wall -c -I./objects/include -o ./lib/macaddress.o ./objects/macaddress.cpp
 g++ -Wall -c -I./objects/include -o ./lib/ipaddress.o ./objects/ipaddress.cpp
 g++ -Wall -c -I./objects/include -o ./lib/vlan.o ./objects/vlan.cpp
 g++ -Wall -c -I./objects/include -o ./lib/vlancollection.o ./objects/vlancollection.cpp
+g++ -Wall -c -I./objects/include -o ./lib/ipoption.o ./objects/ipoption.cpp
 
 #g++ -Wall -c -I./objects/include ./objects/*.c*
 
 #Headers
 g++ -Wall -c -I./objects/include -I./headers/include -o ./lib/header_ethernet.o ./headers/header_ethernet.cpp
+g++ -Wall -c -I./objects/include -I./headers/include -o ./lib/header_ip.o ./headers/header_ip.cpp
 
 #Pdu
 g++ -Wall -c -I./objects/include -I./headers/include -I./pdu/include -o ./lib/pdu_arp.o ./pdu/pdu_arp.cpp

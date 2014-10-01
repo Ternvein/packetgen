@@ -14,6 +14,9 @@
 class Ethertype : public Object
 {
 public:
+    static const unsigned short IP = 0x0800;
+    static const unsigned short ARP = 0x0806;
+
     static const unsigned int rawSize = 2;
     static const unsigned int stringMinSize = 5;
 

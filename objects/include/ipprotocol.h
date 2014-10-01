@@ -14,6 +14,8 @@
 class IpProtocol : public Object
 {
 public:
+    static const unsigned char ICMP = 0x01;
+
     static const unsigned char protocolMask = 0xFF;
     static const unsigned int rawSize = 1;
     static const unsigned int stringMinSize = 3;

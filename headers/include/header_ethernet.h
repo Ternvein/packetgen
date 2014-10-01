@@ -22,6 +22,7 @@ class Ethernet
 public:
     static const unsigned int rawMinSize = 15;
 
+    //TODO: Remove from here, it's in the Ethertype namespace
     static const unsigned int ethertypeArp = 0x0806;
     static const unsigned int ethertypeIpv4 = 0x0800;
 

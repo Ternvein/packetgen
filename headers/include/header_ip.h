@@ -71,6 +71,9 @@ private:
     IpAddress __srcIp;
     IpAddress __dstIp;
 
+protected:
+    static unsigned short CalculateChecksum(const unsigned char *buffer, unsigned int size);
+
 public:
     Ip();
     Ip(const Ip &ip);
@@ -80,11 +83,40 @@ public:
 
     void Set(const Ip &ip);
 
-    bool GetRaw(unsigned char *buffer, unsigned int size) const;
+    bool GetRaw(unsigned char *buffer, unsigned int size, unsigned int *offset) const;
     bool SetRaw(const unsigned char *buffer, unsigned int size);
 
     bool SetHeaderLength(unsigned int length);
     unsigned int GetHeaderLength() const;
+
+    bool SetTotalLength(unsigned int length);
+    unsigned int GetTotalLength() const;
+
+    bool SetFlagDontFragment(bool flag);
+    bool GetFlagDontFragment() const;
+
+    bool SetFlagMoreFragments(bool flag);
+    bool GetFlagMoreFragments() const;
+
+    bool SetFragmentOffset(unsigned int offset);
+    unsigned int GetFragmentOffset() const;
+
+    bool SetTtl(unsigned int ttl);
+    unsigned int GetTtl() const;
+
+    bool SetIpProtocol(const IpProtocol &protocol);
+    IpProtocol GetIpProtocol() const;
+
+    bool SetChecksum(unsigned short checksum);
+    unsigned short GetChecksum() const;
+    unsigned short CalculateChecksum() const;
+    bool IsChecksumValid() const;
+
+    bool SetSourceIp(const IpAddress &ip);
+    IpAddress GetSourceIp() const;
+
+    bool SetDestinationIp(const IpAddress &ip);
+    IpAddress GetDestinationIp() const;
 
     bool operator==(const Ip &right) const;
     bool operator!=(const Ip &right) const;

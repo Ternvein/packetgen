@@ -51,6 +51,8 @@ void Header::Ip::Clear()
 
 void Header::Ip::Set(const Ip &ip)
 {
+    Clear();
+
     __version = ip.__version;
     __headerLength = ip.__headerLength;
     __dscp = ip.__dscp;
@@ -72,7 +74,7 @@ void Header::Ip::Set(const Ip &ip)
     __dstIp = ip.__dstIp;
 }
 
-bool Header::Ip::GetRaw(unsigned char *buffer, unsigned int size) const
+bool Header::Ip::GetRaw(unsigned char *buffer, unsigned int size, unsigned int *offset) const
 {
     if (buffer == NULL) {
         std::cerr << __PRETTY_FUNCTION__ << ": NULL header detected" << std::endl;
@@ -141,6 +143,10 @@ bool Header::Ip::GetRaw(unsigned char *buffer, unsigned int size) const
 
     memcpy(buffer, raw, size);
 
+    if (offset != NULL) {
+        *offset = dstIpOffset + IpAddress::rawSize;
+    }
+
     return true;
 }
 
@@ -208,6 +214,199 @@ bool Header::Ip::SetHeaderLength(unsigned int length)
 unsigned int Header::Ip::GetHeaderLength() const
 {
     return __headerLength;
+}
+
+bool Header::Ip::SetTotalLength(unsigned int length)
+{
+    unsigned short max = ~0;
+
+    if (length < rawMinSize || length > max) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Invalid total length" << std::endl;
+        return false;
+    }
+
+    __totalLength = static_cast<unsigned short>(length);
+
+    return true;
+}
+
+unsigned int Header::Ip::GetTotalLength() const
+{
+    return __totalLength;
+}
+
+bool Header::Ip::SetFlagDontFragment(bool flag)
+{
+    if (__fragmentOffset != 0 && flag) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Can't set Don't Fragment flag with non-zero fragment offset" << std::endl;
+        return false;
+    }
+
+    __isDontFragment = flag;
+
+    return true;
+}
+
+bool Header::Ip::GetFlagDontFragment() const
+{
+    return __isDontFragment;
+}
+
+bool Header::Ip::SetFlagMoreFragments(bool flag)
+{
+    __isMoreFragments = flag;
+
+    return true;
+}
+
+bool Header::Ip::GetFlagMoreFragments() const
+{
+    return __isMoreFragments;
+}
+
+bool Header::Ip::SetFragmentOffset(unsigned int offset)
+{
+    if (__isDontFragment && offset != 0) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Can't set non-zero fragment offset with Don't Fragment flag" << std::endl;
+        return false;
+    }
+
+    __fragmentOffset = offset;
+
+    return true;
+}
+
+unsigned int Header::Ip::GetFragmentOffset() const
+{
+    return __fragmentOffset;
+}
+
+bool Header::Ip::SetTtl(unsigned int ttl)
+{
+    unsigned char max = ~0;
+
+    if (ttl > max) {
+        std::cerr << __PRETTY_FUNCTION__ << ": TTL value is too big" << std::endl;
+        return false;
+    }
+
+    __ttl = ttl;
+
+    return true;
+}
+
+unsigned int Header::Ip::GetTtl() const
+{
+    return __ttl;
+}
+
+bool Header::Ip::SetIpProtocol(const IpProtocol &protocol)
+{
+    __ipProto = protocol;
+
+    return true;
+}
+
+IpProtocol Header::Ip::GetIpProtocol() const
+{
+    return __ipProto;
+}
+
+bool Header::Ip::SetChecksum(unsigned short checksum)
+{
+    unsigned short correct = CalculateChecksum();
+
+    if (checksum != correct) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Warning! Checksum doesn't match ("
+                  << checksum << ", correct: " << correct << ")" << std::endl;
+    }
+
+    __checksum = checksum;
+
+    return true;
+}
+
+unsigned short Header::Ip::GetChecksum() const
+{
+    return __checksum;
+}
+
+unsigned short Header::Ip::CalculateChecksum(const unsigned char *buffer, unsigned int size)
+{
+    if (buffer == NULL) {
+        std::cerr << __PRETTY_FUNCTION__ << ": NULL buffer detected" << std::endl;
+        return 0;
+    }
+
+    if ((size % 2) != 0) {
+        std::cerr << __PRETTY_FUNCTION__ << ": Buffer size is invalid" << std::endl;
+        return 0;
+    }
+
+    unsigned int offset = 0;
+    unsigned int sum = 0;
+    unsigned short octet = 0;
+    while (offset < size) {
+        octet = *reinterpret_cast<unsigned short *>(&buffer[offset]);
+        sum += octet;
+        offset += sizeof(unsigned short);
+    }
+
+    unsigned short checksum = (sum & 0xFFFF0000) + (sum & 0x0000FFFF);
+
+    return ~checksum;
+}
+
+unsigned short Header::Ip::CalculateChecksum() const
+{
+    unsigned char buffer[rawMinSize];
+
+    bool rc = GetRaw(buffer, sizeof(buffer));
+    if (!rc) {
+        return 0;
+    }
+
+    unsigned short checksum = 0;
+    rc = Object::ConvertToRaw(&buffer[checksumOffset], checksum);
+    if (!rc) {
+        return 0;
+    }
+
+    return CalculateChecksum(buffer, sizeof(buffer));
+}
+
+bool Header::Ip::IsChecksumValid() const
+{
+    unsigned char buffer[rawMinSize];
+
+    bool rc = GetRaw(buffer, sizeof(buffer));
+    if (!rc) {
+        return false;
+    }
+
+    unsigned short checksum = CalculateChecksum(buffer, sizeof(buffer));
+
+    return (checksum == 0);
+}
+
+bool Header::Ip::SetSourceIp(const IpAddress &ip)
+{
+    return __srcIp.Set(ip);
+}
+
+IpAddress Header::Ip::GetSourceIp() const
+{
+    return __srcIp;
+}
+
+bool Header::Ip::SetDestinationIp(const IpAddress &ip)
+{
+    return __dstIp.Set(ip);
+}
+
+IpAddress Header::Ip::GetDestinationIp() const
+{
+    return __dstIp;
 }
 
 bool Header::Ip::operator==(const Ip &right) const

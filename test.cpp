@@ -6,6 +6,7 @@
  */
 
 #include "pdu_arp.h"
+#include "pdu_icmp.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -15,6 +16,7 @@
 int main()
 {
     Pdu::Arp arp;
+    Pdu::Icmp icmp;
 
     unsigned char pdu[50];
     unsigned int offset = 0;
@@ -86,6 +88,40 @@ int main()
     std::cout << "PDU changed size: " << offset2 << std::endl;
     for (unsigned int i = 0; i < offset2; i++) {
         printf("%02x ", pdu2[i]);
+    }
+    printf("\r\n");
+
+    memset(pdu, 0, sizeof(pdu));
+    memset(buffer, 0, sizeof(buffer));
+    offset = 0;
+
+    std::cout << "Statistic ICMP PDU 1:" << std::endl;
+    icmp.GetEthernet().GetDstMac().ToString(buffer, sizeof(buffer));
+    std::cout << "DstMac: " << buffer << std::endl;
+    icmp.GetEthernet().GetSrcMac().ToString(buffer, sizeof(buffer));
+    std::cout << "SrcMac: " << buffer << std::endl;
+    vlans = icmp.GetEthernet().GetVlans();
+    for (iter = vlans.Begin(); iter != vlans.End(); iter++) {
+        std::cout << "__________" << std::endl;
+        std::cout << "CoS: " << iter->GetCos() << std::endl;
+        std::cout << "Dropped: " << (iter->IsDei() ? "yes" : "no") << std::endl;
+        std::cout << "VID: " << iter->GetVid() << std::endl;
+    }
+    std::cout << "__________" << std::endl;
+    std::cout << "Ethertype: " << icmp.GetEthernet().GetEthertype().Get() << std::endl;
+    icmp.GetIp().GetSrcIp().ToString(buffer, sizeof(buffer));
+    std::cout << "SenderIp: " << buffer << std::endl;
+    icmp.GetIp().GetDstIp().ToString(buffer, sizeof(buffer));
+    std::cout << "TargetIp: " << buffer << std::endl;
+
+    rc = icmp.GetRaw(pdu, sizeof(pdu), &offset);
+    if (!rc) {
+        std::cerr << "Main: Can't get raw ICMP" << std::endl;
+    }
+
+    std::cout << "ICMP PDU size: " << offset << std::endl;
+    for (unsigned int i = 0; i < offset; i++) {
+        printf("%02x ", pdu[i]);
     }
     printf("\r\n");
 

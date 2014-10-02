@@ -19,18 +19,7 @@ Header::Ethernet::Ethernet()
 
 Header::Ethernet::Ethernet(const Ethernet &ethernet)
 {
-    VlanCollection::ConstIterator iter;
-
-    Clear();
-
-    __dstMac = ethernet.__dstMac;
-    __srcMac = ethernet.__srcMac;
-
-    for (iter = ethernet.__vlans.Begin(); iter != ethernet.__vlans.End(); iter++) {
-        __vlans.Add(*iter);
-    }
-
-    __ethertype = ethernet.__ethertype;
+    Set(ethernet);
 }
 
 Header::Ethernet::~Ethernet()
@@ -44,6 +33,21 @@ void Header::Ethernet::Clear()
     __srcMac.Clear();
     __vlans.Clear();
     __ethertype = 0;
+}
+
+void Header::Ethernet::Set(const Ethernet &ethernet)
+{
+    Clear();
+
+    __dstMac = ethernet.__dstMac;
+    __srcMac = ethernet.__srcMac;
+
+    VlanCollection::ConstIterator iter;
+    for (iter = ethernet.__vlans.Begin(); iter != ethernet.__vlans.End(); iter++) {
+        __vlans.Add(*iter);
+    }
+
+    __ethertype = ethernet.__ethertype;
 }
 
 bool Header::Ethernet::GetRaw(unsigned char *ethernet, unsigned int size, unsigned int *offset) const
@@ -166,6 +170,15 @@ bool Header::Ethernet::SetRaw(const unsigned char *ethernet, unsigned int size, 
     }
 
     return false;
+}
+
+unsigned int Header::Ethernet::GetSize() const
+{
+    unsigned int size = rawMinSize;
+
+    size += __vlans.GetCount() * Vlan::rawSize;
+
+    return size;
 }
 
 MacAddress Header::Ethernet::GetDstMac() const

@@ -84,7 +84,9 @@ public:
     void Set(const Ip &ip);
 
     bool GetRaw(unsigned char *buffer, unsigned int size, unsigned int *offset) const;
-    bool SetRaw(const unsigned char *buffer, unsigned int size);
+    bool SetRaw(const unsigned char *buffer, unsigned int size, unsigned int *offset);
+
+    unsigned int GetSize() const;
 
     bool SetHeaderLength(unsigned int length);
     unsigned int GetHeaderLength() const;
@@ -112,11 +114,11 @@ public:
     unsigned short CalculateChecksum() const;
     bool IsChecksumValid() const;
 
-    bool SetSourceIp(const IpAddress &ip);
-    IpAddress GetSourceIp() const;
+    bool SetSrcIp(const IpAddress &ip);
+    IpAddress GetSrcIp() const;
 
-    bool SetDestinationIp(const IpAddress &ip);
-    IpAddress GetDestinationIp() const;
+    bool SetDstIp(const IpAddress &ip);
+    IpAddress GetDstIp() const;
 
     bool operator==(const Ip &right) const;
     bool operator!=(const Ip &right) const;

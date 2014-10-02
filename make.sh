@@ -14,6 +14,7 @@ g++ -Wall -c -I./objects/include -o ./lib/ipaddress.o ./objects/ipaddress.cpp
 g++ -Wall -c -I./objects/include -o ./lib/vlan.o ./objects/vlan.cpp
 g++ -Wall -c -I./objects/include -o ./lib/vlancollection.o ./objects/vlancollection.cpp
 g++ -Wall -c -I./objects/include -o ./lib/ipoption.o ./objects/ipoption.cpp
+g++ -Wall -c -I./objects/include -o ./lib/ipprotocol.o ./objects/ipprotocol.cpp
 
 #g++ -Wall -c -I./objects/include ./objects/*.c*
 
@@ -23,6 +24,7 @@ g++ -Wall -c -I./objects/include -I./headers/include -o ./lib/header_ip.o ./head
 
 #Pdu
 g++ -Wall -c -I./objects/include -I./headers/include -I./pdu/include -o ./lib/pdu_arp.o ./pdu/pdu_arp.cpp
+g++ -Wall -c -I./objects/include -I./headers/include -I./pdu/include -o ./lib/pdu_icmp.o ./pdu/pdu_icmp.cpp
 
 echo "Archiving..."
 

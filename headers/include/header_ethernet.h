@@ -45,8 +45,12 @@ public:
 
     void Clear();
 
+    void Set(const Ethernet &ethernet);
+
     bool GetRaw(unsigned char *ethernet, unsigned int size, unsigned int *offset) const;
     bool SetRaw(const unsigned char *ethernet, unsigned int size, unsigned int *offset);
+
+    unsigned int GetSize() const;
 
     MacAddress GetDstMac() const;
     bool SetDstMac(const MacAddress &mac);

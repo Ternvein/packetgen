@@ -84,8 +84,14 @@ public:
 
     void Set(const Icmp &icmp);
 
-    bool GetRaw(unsigned char *buffer, unsigned int size) const;
-    bool SetRaw(const unsigned char *buffer, unsigned int size);
+    bool GetRaw(unsigned char *buffer, unsigned int size, unsigned int *offset) const;
+    bool SetRaw(const unsigned char *buffer, unsigned int size, unsigned int *offset);
+
+    bool SetEthernet(const Header::Ethernet &ethernet);
+    Header::Ethernet GetEthernet() const;
+
+    bool SetIp(const Header::Ip &ip);
+    Header::Ip GetIp() const;
 
     bool SetType(Type value);
     Type GetType() const;

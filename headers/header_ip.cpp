@@ -144,13 +144,13 @@ bool Header::Ip::GetRaw(unsigned char *buffer, unsigned int size, unsigned int *
     memcpy(buffer, raw, size);
 
     if (offset != NULL) {
-        *offset = dstIpOffset + IpAddress::rawSize;
+        *offset = *offset + dstIpOffset + IpAddress::rawSize;
     }
 
     return true;
 }
 
-bool Header::Ip::SetRaw(const unsigned char *buffer, unsigned int size)
+bool Header::Ip::SetRaw(const unsigned char *buffer, unsigned int size, unsigned int *offset)
 {
     Clear();
 
@@ -201,7 +201,18 @@ bool Header::Ip::SetRaw(const unsigned char *buffer, unsigned int size)
         return false;
     }
 
+    if (offset != NULL) {
+        *offset = *offset + dstIpOffset + IpAddress::rawSize;
+    }
+
     return true;
+}
+
+unsigned int Header::Ip::GetSize() const
+{
+    unsigned int size = rawMinSize;
+
+    return size;
 }
 
 bool Header::Ip::SetHeaderLength(unsigned int length)
@@ -347,7 +358,7 @@ unsigned short Header::Ip::CalculateChecksum(const unsigned char *buffer, unsign
     unsigned int sum = 0;
     unsigned short octet = 0;
     while (offset < size) {
-        octet = *reinterpret_cast<unsigned short *>(&buffer[offset]);
+        octet = *reinterpret_cast<const unsigned short *>(&buffer[offset]);
         sum += octet;
         offset += sizeof(unsigned short);
     }
@@ -361,7 +372,7 @@ unsigned short Header::Ip::CalculateChecksum() const
 {
     unsigned char buffer[rawMinSize];
 
-    bool rc = GetRaw(buffer, sizeof(buffer));
+    bool rc = GetRaw(buffer, sizeof(buffer), NULL);
     if (!rc) {
         return 0;
     }
@@ -379,7 +390,7 @@ bool Header::Ip::IsChecksumValid() const
 {
     unsigned char buffer[rawMinSize];
 
-    bool rc = GetRaw(buffer, sizeof(buffer));
+    bool rc = GetRaw(buffer, sizeof(buffer), NULL);
     if (!rc) {
         return false;
     }
@@ -389,22 +400,22 @@ bool Header::Ip::IsChecksumValid() const
     return (checksum == 0);
 }
 
-bool Header::Ip::SetSourceIp(const IpAddress &ip)
+bool Header::Ip::SetSrcIp(const IpAddress &ip)
 {
     return __srcIp.Set(ip);
 }
 
-IpAddress Header::Ip::GetSourceIp() const
+IpAddress Header::Ip::GetSrcIp() const
 {
     return __srcIp;
 }
 
-bool Header::Ip::SetDestinationIp(const IpAddress &ip)
+bool Header::Ip::SetDstIp(const IpAddress &ip)
 {
     return __dstIp.Set(ip);
 }
 
-IpAddress Header::Ip::GetDestinationIp() const
+IpAddress Header::Ip::GetDstIp() const
 {
     return __dstIp;
 }

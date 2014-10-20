@@ -14,7 +14,7 @@
 
 namespace Pdu {
 
-class Arp
+class Arp : public Header::Ethernet
 {
 public:
     typedef enum
@@ -66,16 +66,6 @@ public:
 
     bool GetRaw(unsigned char *arp, unsigned int size, unsigned int *offset) const;
     bool SetRaw(const unsigned char *arp, unsigned int size, unsigned int *offset);
-
-    MacAddress GetDstMac() const;
-    bool SetDstMac(const MacAddress &mac);
-
-    MacAddress GetSrcMac() const;
-    bool SetSrcMac(const MacAddress &mac);
-
-    VlanCollection GetVlans() const;
-    bool AddVlan(const Vlan &vlan);
-    bool RemoveVlan(const Vlan &vlan);
 
     IpAddress GetDstIp() const;
     bool SetDstIp(const IpAddress &ip);

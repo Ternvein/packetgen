@@ -244,41 +244,6 @@ bool Pdu::Arp::SetRaw(const unsigned char *arp, unsigned int size, unsigned int 
     return true;
 }
 
-MacAddress Pdu::Arp::GetDstMac() const
-{
-    return __ethernet.GetDstMac();
-}
-
-bool Pdu::Arp::SetDstMac(const MacAddress &mac)
-{
-    return __ethernet.SetDstMac(mac);
-}
-
-MacAddress Pdu::Arp::GetSrcMac() const
-{
-    return __ethernet.GetSrcMac();
-}
-
-bool Pdu::Arp::SetSrcMac(const MacAddress &mac)
-{
-    return __ethernet.SetSrcMac(mac);
-}
-
-VlanCollection Pdu::Arp::GetVlans() const
-{
-    return __ethernet.GetVlans();
-}
-
-bool Pdu::Arp::AddVlan(const Vlan &vlan)
-{
-    return __ethernet.AddVlan(vlan);
-}
-
-bool Pdu::Arp::RemoveVlan(const Vlan &vlan)
-{
-    return __ethernet.RemoveVlan(vlan);
-}
-
 IpAddress Pdu::Arp::GetDstIp() const
 {
     return __targetIp;

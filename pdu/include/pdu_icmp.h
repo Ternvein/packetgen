@@ -14,7 +14,7 @@
 
 namespace Pdu {
 
-class Icmp
+class Icmp : public Header::Ethernet, public Header::Ip
 {
 public:
     typedef enum {
@@ -72,9 +72,6 @@ private:
 
     unsigned char *__data;
 
-protected:
-    static unsigned short CalculateChecksum(const unsigned char *buffer, unsigned int size);
-
 public:
     Icmp();
     Icmp(const Icmp &icmp);
@@ -86,12 +83,6 @@ public:
 
     bool GetRaw(unsigned char *buffer, unsigned int size, unsigned int *offset) const;
     bool SetRaw(const unsigned char *buffer, unsigned int size, unsigned int *offset);
-
-    bool SetEthernet(const Header::Ethernet &ethernet);
-    Header::Ethernet GetEthernet() const;
-
-    bool SetIp(const Header::Ip &ip);
-    Header::Ip GetIp() const;
 
     bool SetType(Type value);
     Type GetType() const;

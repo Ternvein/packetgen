@@ -28,8 +28,10 @@ void Pdu::Icmp::Clear()
     __ethernet.Clear();
     __ip.Clear();
 
-    __ethernet.SetEthertype(Ethertype::IP);
-    __ip.SetIpProtocol(IpProtocol::ICMP);
+    Ethertype ether(Ethertype::IP);
+    IpProtocol proto(IpProtocol::ICMP);
+    __ethernet.SetEthertype(ether);
+    __ip.SetIpProtocol(proto);
 
     __type = 0;
     __code = 0;
@@ -141,30 +143,6 @@ bool Pdu::Icmp::SetRaw(const unsigned char *buffer, unsigned int size, unsigned 
     return true;
 }
 
-bool Pdu::Icmp::SetEthernet(const Header::Ethernet &ethernet)
-{
-    __ethernet.Set(ethernet);
-
-    return true;
-}
-
-Header::Ethernet Pdu::Icmp::GetEthernet() const
-{
-    return __ethernet;
-}
-
-bool Pdu::Icmp::SetIp(const Header::Ip &ip)
-{
-    __ip.Set(ip);
-
-    return true;
-}
-
-Header::Ip Pdu::Icmp::GetIp() const
-{
-    return __ip;
-}
-
 bool Pdu::Icmp::SetType(Type value)
 {
     __type = value;
@@ -207,32 +185,6 @@ unsigned short Pdu::Icmp::GetChecksum() const
     return __checksum;
 }
 
-unsigned short Pdu::Icmp::CalculateChecksum(const unsigned char *buffer, unsigned int size)
-{
-    if (buffer == NULL) {
-        std::cerr << __PRETTY_FUNCTION__ << ": NULL buffer detected" << std::endl;
-        return 0;
-    }
-
-    if ((size % 2) != 0) {
-        std::cerr << __PRETTY_FUNCTION__ << ": Buffer size is invalid" << std::endl;
-        return 0;
-    }
-
-    unsigned int offset = 0;
-    unsigned int sum = 0;
-    unsigned short octet = 0;
-    while (offset < size) {
-        octet = *reinterpret_cast<const unsigned short *>(&buffer[offset]);
-        sum += octet;
-        offset += sizeof(unsigned short);
-    }
-
-    unsigned short checksum = (sum & 0xFFFF0000) + (sum & 0x0000FFFF);
-
-    return ~checksum;
-}
-
 unsigned short Pdu::Icmp::CalculateChecksum() const
 {
     unsigned char buffer[rawMinSize];
@@ -248,7 +200,7 @@ unsigned short Pdu::Icmp::CalculateChecksum() const
         return 0;
     }
 
-    return CalculateChecksum(buffer, sizeof(buffer));
+    return Header::Ip::CalculateChecksum(buffer, sizeof(buffer));
 }
 
 bool Pdu::Icmp::IsChecksumValid() const
@@ -260,7 +212,7 @@ bool Pdu::Icmp::IsChecksumValid() const
         return false;
     }
 
-    unsigned short checksum = CalculateChecksum(buffer, sizeof(buffer));
+    unsigned short checksum = Header::Ip::CalculateChecksum(buffer, sizeof(buffer));
 
     return (checksum == 0);
 }

@@ -61,9 +61,6 @@ private:
     static const unsigned int restOffset = 4;
     static const unsigned int dataOffset = 8;
 
-    Header::Ethernet __ethernet;
-    Header::Ip __ip;
-
     unsigned char __type;
     unsigned char __code;
 
@@ -71,6 +68,7 @@ private:
     unsigned int __rest;
 
     unsigned char *__data;
+    unsigned int __dataSize;
 
 public:
     Icmp();
@@ -83,6 +81,9 @@ public:
 
     bool GetRaw(unsigned char *buffer, unsigned int size, unsigned int *offset) const;
     bool SetRaw(const unsigned char *buffer, unsigned int size, unsigned int *offset);
+
+    unsigned int GetMinSize() const;
+    unsigned int GetSize() const;
 
     bool SetType(Type value);
     Type GetType() const;
@@ -97,6 +98,11 @@ public:
 
     bool SetRest(unsigned int rest);
     unsigned int GetRest() const;
+
+    bool SetData(const unsigned char *data, unsigned int dataSize);
+    bool GetData(unsigned char *data, unsigned int dataSize) const;
+    void ClearData();
+    unsigned int GetDataSize() const;
 
     bool operator==(const Icmp &right) const;
     bool operator!=(const Icmp &right) const;

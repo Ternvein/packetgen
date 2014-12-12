@@ -51,6 +51,8 @@ private:
     static const unsigned int versionMaskOffset = 4;
     static const unsigned int dscpMaskOffset = 2;
 
+    static const unsigned int headerLengthStep = 4;
+
     unsigned char __version;
     unsigned char __headerLength;
     unsigned char __dscp;

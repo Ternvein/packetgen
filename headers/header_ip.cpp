@@ -7,6 +7,7 @@
 
 #include "header_ip.h"
 
+#include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -89,10 +90,10 @@ bool Header::Ip::GetRaw(unsigned char *buffer, unsigned int size, unsigned int *
 
     unsigned char raw[size];
 
-    raw[versionMask] = (__version << versionMaskOffset) & versionMask;
-    raw[headerLengthMask] = __headerLength & headerLengthMask;
+    raw[versionOffset] = (__version << versionMaskOffset) & versionMask;
+    raw[headerLengthOffset] |= (__headerLength / headerLengthStep) & headerLengthMask;
     raw[dscpOffset] = (__dscp << dscpMaskOffset) & dscpMask;
-    raw[ecnOffset] = __ecn & ecnMask;
+    raw[ecnOffset] |= __ecn & ecnMask;
 
     bool rc = Object::ConvertToRaw(&raw[totalLengthOffset], __totalLength);
     if (!rc) {
@@ -349,23 +350,23 @@ unsigned short Header::Ip::CalculateChecksum(const unsigned char *buffer, unsign
         return 0;
     }
 
-    if ((size % 2) != 0) {
-        std::cerr << __PRETTY_FUNCTION__ << ": Buffer size is invalid" << std::endl;
-        return 0;
-    }
-
     unsigned int offset = 0;
     unsigned int sum = 0;
     unsigned short octet = 0;
     while (offset < size) {
-        octet = *reinterpret_cast<const unsigned short *>(&buffer[offset]);
+        if ((size % 2) != 0 && (offset >= size - 1)) {
+            octet = buffer[offset] << 8;
+        } else {
+            octet = *(reinterpret_cast<const unsigned short *>(&buffer[offset]));
+        }
         sum += octet;
         offset += sizeof(unsigned short);
     }
 
-    unsigned short checksum = (sum & 0xFFFF0000) + (sum & 0x0000FFFF);
+    unsigned short checksum = ((sum & 0xFFFF0000) >> 16) + (sum & 0x0000FFFF);
+    checksum = htons(checksum);
 
-    return ~checksum;
+    return (~checksum);
 }
 
 unsigned short Header::Ip::CalculateChecksum() const

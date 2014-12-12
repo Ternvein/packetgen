@@ -17,7 +17,7 @@ Object::~Object()
 
 unsigned int Object::GetByteMask(unsigned int offset)
 {
-    return byteMask << (offset * bitsInByte);
+    return (byteMask << (offset * bitsInByte));
 }
 
 bool Object::ConvertToRaw(unsigned char *buffer, unsigned long long int object)

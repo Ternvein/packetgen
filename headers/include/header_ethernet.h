@@ -20,11 +20,7 @@ namespace Header {
 class Ethernet
 {
 public:
-    static const unsigned int rawMinSize = 15;
-
-    //TODO: Remove from here, it's in the Ethertype namespace
-    static const unsigned int ethertypeArp = 0x0806;
-    static const unsigned int ethertypeIpv4 = 0x0800;
+    static const unsigned int rawMinSize = 14;
 
 private:
     static const unsigned int dstMacOffset = 0;

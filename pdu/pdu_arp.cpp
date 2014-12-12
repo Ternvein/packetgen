@@ -34,7 +34,9 @@ Pdu::Arp::~Arp()
 
 void Pdu::Arp::Clear()
 {
-    __ethernet.Clear();
+    Header::Ethernet *ethernet = dynamic_cast<Header::Ethernet *>(this);
+
+    ethernet->Clear();
 
     __hardwareType = defaultHardwareType;
     __protocolType.Set(defaultProtocolType);
@@ -50,18 +52,20 @@ void Pdu::Arp::Clear()
 
     MacAddress srcMac(defaultSrcMac, sizeof(defaultSrcMac));
     MacAddress dstMac(defaultDstMac, sizeof(defaultDstMac));
-    __ethernet.SetSrcMac(srcMac);
-    __ethernet.SetDstMac(dstMac);
+    ethernet->SetSrcMac(srcMac);
+    ethernet->SetDstMac(dstMac);
 
-    Ethertype ethertype(Header::Ethernet::ethertypeArp);
-    __ethernet.SetEthertype(ethertype);
+    Ethertype ethertype(Ethertype::ARP);
+    ethernet->SetEthertype(ethertype);
 }
 
 bool Pdu::Arp::Set(const Arp &arp)
 {
     Clear();
 
-    __ethernet = arp.__ethernet;
+    Header::Ethernet *ethernet = dynamic_cast<Header::Ethernet *>(this);
+
+    ethernet->Set(arp);
     __hardwareType = arp.__hardwareType;
     __protocolType = arp.__protocolType;
     __hardwareSize = arp.__hardwareSize;
@@ -80,6 +84,8 @@ bool Pdu::Arp::GetRaw(unsigned char *arp, unsigned int size, unsigned int *offse
         return false;
     }
 
+    const Header::Ethernet *ethernet = dynamic_cast<const Header::Ethernet *>(this);
+
     if (size < (dataMinSize + Header::Ethernet::rawMinSize)) {
         std::cerr << __PRETTY_FUNCTION__ << ": Packet buffer size " << size
                   << " is too short" << std::endl;
@@ -90,7 +96,7 @@ bool Pdu::Arp::GetRaw(unsigned char *arp, unsigned int size, unsigned int *offse
     unsigned int currentOffset = 0;
     bool rc;
 
-    rc = __ethernet.GetRaw(arpTemp, size, &currentOffset);
+    rc = ethernet->GetRaw(arpTemp, size, &currentOffset);
     if (!rc) {
         return false;
     }
@@ -113,7 +119,7 @@ bool Pdu::Arp::GetRaw(unsigned char *arp, unsigned int size, unsigned int *offse
     Object::ConvertToRaw(&arpTemp[currentOffset], static_cast<unsigned short>(__opcode));
     currentOffset += sizeof(unsigned short);
 
-    rc = __ethernet.GetSrcMac().GetRaw(&arpTemp[currentOffset], size - currentOffset);
+    rc = ethernet->GetSrcMac().GetRaw(&arpTemp[currentOffset], size - currentOffset);
     if (!rc) {
         return false;
     }
@@ -125,7 +131,7 @@ bool Pdu::Arp::GetRaw(unsigned char *arp, unsigned int size, unsigned int *offse
     }
     currentOffset += IpAddress::rawSize;
 
-    rc = __ethernet.GetDstMac().GetRaw(&arpTemp[currentOffset], size - currentOffset);
+    rc = ethernet->GetDstMac().GetRaw(&arpTemp[currentOffset], size - currentOffset);
     if (!rc) {
         return false;
     }
@@ -150,6 +156,8 @@ bool Pdu::Arp::SetRaw(const unsigned char *arp, unsigned int size, unsigned int 
 {
     Clear();
 
+    Header::Ethernet *ethernet = dynamic_cast<Header::Ethernet *>(this);
+
     if (arp == NULL) {
         std::cerr << __PRETTY_FUNCTION__ << ": NULL packet detected" << std::endl;
         return false;
@@ -163,7 +171,7 @@ bool Pdu::Arp::SetRaw(const unsigned char *arp, unsigned int size, unsigned int 
     unsigned int currentOffset = 0;
     bool rc;
 
-    rc = __ethernet.SetRaw(&arp[currentOffset], size, &currentOffset);
+    rc = ethernet->SetRaw(&arp[currentOffset], size, &currentOffset);
     if (!rc) {
         return false;
     }
@@ -302,7 +310,9 @@ bool Pdu::Arp::SetOpcode(const Opcode &opcode)
 
 bool Pdu::Arp::operator==(const Arp &right) const
 {
-    if (__ethernet != right.__ethernet) {
+    const Header::Ethernet *ethernet = dynamic_cast<const Header::Ethernet *>(this);
+
+    if (*ethernet != right) {
         return false;
     }
 
